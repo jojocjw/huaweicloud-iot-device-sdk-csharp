@@ -262,7 +262,25 @@ namespace IoT.SDK.Device.Client
                 Log.Error("SDK.Error: Subscribe topic fail, the topic is " + topic);
             }
         }
-        
+
+        public void SubscribeCompleteTopic(string topic, RawMessageListener listener)
+        {
+            try
+            {
+                List<MqttTopicFilter> listTopic = new List<MqttTopicFilter>();
+
+                var topicFilterBulderPreTopic = new MqttTopicFilterBuilder().WithTopic(topic).Build();
+                listTopic.Add(topicFilterBulderPreTopic);
+
+                connection.SubscribeTopic(listTopic);
+                rawMessageListenerDic.Add(topic, listener);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("SDK.Error: Subscribe topic fail, the topic is " + topic);
+            }
+        }
+
         public void OnMessagePublished(RawMessage message)
         {
             if (messagePublishListener != null)
@@ -445,6 +463,15 @@ namespace IoT.SDK.Device.Client
         private void OnCustomCommand(RawMessage message)
         {
             deviceCustomMessageListener.OnCustomMessageCommand(message.Payload);
+        }
+        public virtual void ReportEvent(string deviceId, DeviceEvent evnt)
+        {
+            return;
+        }
+
+        public void Close()
+        {
+            connection.Close();
         }
     }
 }

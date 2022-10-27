@@ -136,5 +136,38 @@ namespace IoT.SDK.Device.Utils
         {
             return Directory.GetCurrentDirectory();
         }
+
+        /// <summary>
+        /// 从topic里解析出deviceId
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public static string GetDeviceId(string topic)
+        {
+            string deviceId = string.Empty;
+            try
+            {
+                if (!string.IsNullOrEmpty(topic) && topic.Contains("/devices/"))
+                {
+                    string[] split = topic.Split(new string[] {"/devices/"}, StringSplitOptions.RemoveEmptyEntries);
+                    int length = split[1].IndexOf('/') + 1;
+                    if (length == 0)
+                    {
+                        throw new InternalException(BaseExceptionEnum.BASE_TOPIC_INVALID_NO_DEVICE_ID, "topic is invalid, no device id.");
+                    }
+                    deviceId = split[1].Substring(0, length);
+                }
+                else
+                {
+                    throw new InternalException(BaseExceptionEnum.BASE_TOPIC_INVALID_NO_DEVICE_ID, "topic is invalid, no device id.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("SDK.Error: Get device id failed, the topic is " + topic);
+            }
+
+            return deviceId;
+        }
     }
 }

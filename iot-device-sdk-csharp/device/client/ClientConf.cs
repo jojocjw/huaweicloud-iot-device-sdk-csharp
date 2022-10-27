@@ -29,6 +29,12 @@ namespace IoT.SDK.Device.Client
 {
     public class ClientConf
     {
+        // 直连设备接入模式
+        public static readonly int CONNECT_OF_NORMAL_DEVICE_MODE = 0;
+
+        // 网桥模式接入模式
+        public static readonly int CONNECT_OF_BRIDGE_MODE = 3;
+
         /// <summary>
         /// 设备ID，在平台注册设备生成
         /// </summary>
@@ -48,6 +54,11 @@ namespace IoT.SDK.Device.Client
         /// 设备接入平台端口
         /// </summary>
         public int Port { get; set; }
+
+        /// <summary>
+        /// 0代表直连方式，3代表网桥方式(跟平台保持一致)。默认是0
+        /// </summary>
+        public int Mode { get; set; }
 
         /// <summary>
         /// 客户端qos,默认值为1

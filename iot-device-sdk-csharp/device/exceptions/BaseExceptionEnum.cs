@@ -40,5 +40,10 @@ namespace IoT.SDK.Device.Exceptions
         /// no request id
         /// </summary>
         BASE_TOPIC_INVALID_NO_REQUEST_ID = 003,
+
+        /// <summary>
+        /// no device id
+        /// </summary>
+        BASE_TOPIC_INVALID_NO_DEVICE_ID = 004,
     }
 }

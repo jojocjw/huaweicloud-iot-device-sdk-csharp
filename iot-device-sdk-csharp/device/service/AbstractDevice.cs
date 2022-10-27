@@ -30,6 +30,7 @@ using IoT.SDK.Device.OTA;
 using IoT.SDK.Device.Timesync;
 using IoT.SDK.Device.Transport;
 using IoT.SDK.Device.Utils;
+using IoT.SDK.Device.Filemanager;
 using NLog;
 
 namespace IoT.SDK.Device.Service
@@ -44,7 +45,8 @@ namespace IoT.SDK.Device.Service
         private DeviceClient client;
 
         private Dictionary<string, AbstractService> services = new Dictionary<string, AbstractService>();
-        
+
+        public FileManagerService fileManagerService { get; set; }
         /// <summary>
         /// 构造函数，使用密码创建设备
         /// </summary>
@@ -279,6 +281,9 @@ namespace IoT.SDK.Device.Service
 
             this.timeSyncService = new TimeSyncService();
             this.AddService("$time_sync", timeSyncService);
+
+            this.fileManagerService = new FileManagerService();
+            this.AddService("$file_manager", fileManagerService);
         }
     }
 }
