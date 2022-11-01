@@ -8,22 +8,22 @@ namespace IoT.SDK.Bridge.Bootstrap
     public class BridgeClientConf
     {
         // 平台接入地址变量名称
-        private static readonly string ENV_NET_BRIDGE_SERVER_IP = "NET_BRIDGE_SERVER_IP";
+        private static readonly string ENV_NET_BRIDGE_SERVER_IP = "iot-mqtts.cn-north-5.myhuaweicloud.com";
 
         // 平台接入端口变量名称
-        private static readonly string ENV_NET_BRIDGE_SERVER_PORT = "NET_BRIDGE_SERVER_PORT";
+        private static readonly int ENV_NET_BRIDGE_SERVER_PORT = 8884;
 
         // 网桥ID环境变量名称
-        private static readonly string ENV_NET_BRIDGE_ID = "NET_BRIDGE_ID";
+        private static readonly string ENV_NET_BRIDGE_ID = "bridge004";
 
         // 网桥密码环境变量名称
-        private static readonly string ENV_NET_BRIDGE_SECRET = "NET_BRIDGE_SECRET";
+        private static readonly string ENV_NET_BRIDGE_SECRET = "bridge004";
 
         // 连接IoT平台的地址 样例：xxxxxx.iot-mqtts.cn-north-4.myhuaweicloud.com
         public string serverIp { get; set; }
 
         // 连接IoT平台的端口
-        public string serverPort { get; set; }
+        public int serverPort { get; set; }
 
         // 连接IoT平台的网桥ID.
         public string bridgeId { get; set; }
@@ -31,7 +31,7 @@ namespace IoT.SDK.Bridge.Bootstrap
         // 连接IoT平台的网桥密码
         public string bridgeSecret { get; set; }
 
-        public static BridgeClientConf fromEnv()
+        public static BridgeClientConf Config()
         {
             BridgeClientConf conf = new BridgeClientConf();
             conf.serverIp = ENV_NET_BRIDGE_SERVER_IP;

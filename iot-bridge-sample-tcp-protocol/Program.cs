@@ -15,7 +15,7 @@ namespace IoT.Bridge.Sample.Tcp
 
             // 启动TCP服务
             TcpServer tcpServer = new TcpServer();
-            Task.Run(async () => { await tcpServer.Start("localhost", 8900); });
+            Task.Run(async () => { await tcpServer.Start("localhost", 8080); });
             
         }
     }

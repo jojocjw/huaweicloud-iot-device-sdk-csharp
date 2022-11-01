@@ -15,15 +15,14 @@ namespace IoT.Bridge.Demo
             int port = 8080;
 
             // ================================================
-            /*
             Bridge.CreateBridge(serverUri, null);
             Bridge bridge = Bridge.GetInstance();
             TcpServer tcpServer = new TcpServer(port);
 
             Task.Run(async () => { await tcpServer.Run(); });
-            */
+            
             // ================================================
-            BridgeSample bridgeSample = new BridgeSample();
+            //BridgeSample bridgeSample = new BridgeSample();
             mre.WaitOne();
         }
     }

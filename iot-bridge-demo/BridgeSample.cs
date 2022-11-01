@@ -50,9 +50,6 @@ namespace IoT.Bridge.Demo
         // 消息内容， 建议每条消息不一致，用于消息上报。
         private static readonly string MESSAGE_CONTENT = "messageContent";
 
-        // 上传文件结果码，此处样例填写0.
-        private static readonly int RESULT_CODE_OF_FILE_UP = 0;
-
         // 文件哈希值
         private static readonly string HASH_CODE = "58059181f378062f9b446e884362a526";
 

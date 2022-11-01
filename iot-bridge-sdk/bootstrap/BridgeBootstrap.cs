@@ -20,7 +20,7 @@ namespace IoT.SDK.Bridge.Bootstrap
         // 从环境变量获取网桥配置信息，初始化网桥。
         public void InitBridge()
         {
-            BridgeClientConf conf = BridgeClientConf.fromEnv();
+            BridgeClientConf conf = BridgeClientConf.Config();
             InitBridge(conf);
         }
 
@@ -29,7 +29,7 @@ namespace IoT.SDK.Bridge.Bootstrap
         {
             if (conf == null)
             {
-                conf = BridgeClientConf.fromEnv();
+                conf = BridgeClientConf.Config();
             }
             BridgeOnline(conf);
         }
@@ -37,10 +37,8 @@ namespace IoT.SDK.Bridge.Bootstrap
         private void BridgeOnline(BridgeClientConf conf)
         {
             ClientConf clientConf = new ClientConf();
-            if (conf.serverIp != null && conf.serverPort != null)
-            {
-                clientConf.ServerUri = ("ssl://" + conf.serverIp + ":" + conf.serverPort);
-            }
+            clientConf.ServerUri = conf.serverIp;
+            clientConf.Port = conf.serverPort;
             clientConf.DeviceId = conf.bridgeId;
             clientConf.Secret = conf.bridgeSecret;
             clientConf.Mode = CONNECT_OF_BRIDGE_MODE;

@@ -19,12 +19,6 @@ namespace IoT.SDK.Bridge.Clent
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly string SINE_TYPE = "sign_type";
-
-        private static readonly string TIMESTAMP = "timestamp";
-
-        private static readonly string PASSWORD = "password";
-
         // bridgeClient相关请求topic
 
         private static readonly string BRIDGE_LOGIN = "$oc/bridges/{0}/devices/{1}/sys/login/request_id={2}";

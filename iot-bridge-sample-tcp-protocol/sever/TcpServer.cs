@@ -44,10 +44,6 @@ namespace IoT.Bridge.Sample.Tcp.Sever
 
         private static readonly char DELIMITER_CHAR = ']';
 
-        private MultithreadEventLoopGroup bossGroup;
-
-        private MultithreadEventLoopGroup workerGroup;
-
         public async Task Start(string host, int port)
         {
             MultithreadEventLoopGroup bossGroup = new MultithreadEventLoopGroup();
@@ -60,9 +56,9 @@ namespace IoT.Bridge.Sample.Tcp.Sever
                     .ChildHandler(new ServerChannelHandler())
                     .Option(ChannelOption.SoBacklog, 128)
                     .Option(ChannelOption.TcpNodelay, true)
-                    .Option(ChannelOption.SoRcvbuf, 1024 * 1024)
+                    .Option(ChannelOption.SoRcvbuf, DEFAULT_BUF_VALUE)
                     .ChildOption(ChannelOption.SoKeepalive, true)
-                    .ChildOption(ChannelOption.SoSndbuf, 1024 * 1024);
+                    .ChildOption(ChannelOption.SoSndbuf, DEFAULT_BUF_VALUE);
 
                 Log.Info("tcp server start......");
 
