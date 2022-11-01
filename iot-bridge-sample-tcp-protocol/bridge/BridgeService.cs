@@ -22,7 +22,7 @@ namespace IoT.Bridge.Sample.Tcp.Bridge
             bridgeClient = bridgeBootstrap.GetBridgeDevice().bridgeClient;
 
             // 设置平台下行数据监听器
-            DownLinkHandler downLinkHandler = new DownLinkHandler();
+            DownLinkHandler downLinkHandler = new DownLinkHandler(bridgeClient);
             bridgeClient.bridgeCommandListener = downLinkHandler;   // 设置平台命令下发监听器
             bridgeClient.bridgeDeviceMessageListener = downLinkHandler;    // 设置平台消息下发监听器
             bridgeClient.bridgeDeviceDisConnListener = downLinkHandler;   // 设置平台通知网桥主动断开设备连接的监听器

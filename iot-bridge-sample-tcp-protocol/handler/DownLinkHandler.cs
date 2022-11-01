@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using IoT.SDK.Bridge.Listener;
+using IoT.SDK.Bridge.Clent;
 using IoT.SDK.Device.Client.Requests;
 using IoT.SDK.Bridge.Request;
 using IoT.Bridge.Sample.Tcp.Session;
@@ -14,6 +15,10 @@ namespace IoT.Bridge.Sample.Tcp.Handler
     class DownLinkHandler : BridgeDeviceMessageListener, BridgeCommandListener, BridgeDeviceDisConnListener
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+        private BridgeClient bridgeClient;
+
+        public DownLinkHandler(BridgeClient bridgeClient) { this.bridgeClient = bridgeClient; }
 
         public void OnDeviceMessage(string deviceId, DeviceMessage deviceMessage) {}
 
@@ -32,6 +37,7 @@ namespace IoT.Bridge.Sample.Tcp.Handler
             {
                 processLocationSetCommand(session, requestId, bridgeCommand);
             }
+            bridgeClient.RespondCommand(deviceId, requestId, new CommandRsp(0));
         }
 
         private void processLocationSetCommand(DeviceSession session, string requestId, BridgeCommand bridgeCommand)
@@ -48,7 +54,7 @@ namespace IoT.Bridge.Sample.Tcp.Handler
             // 根据参数内容构造消息体
             Dictionary<string, Object> paras = bridgeCommand.command.paras;
             DeviceLocationFrequencySet locationFrequencySet = new DeviceLocationFrequencySet();
-            locationFrequencySet.period = (int)paras["period"];
+            locationFrequencySet.period = Convert.ToInt32(paras["period"]);
             locationFrequencySet.msgHeader = msgHeader;
 
             // 发下消息到设备
@@ -57,6 +63,7 @@ namespace IoT.Bridge.Sample.Tcp.Handler
             // 记录平台requestId和设备流水号的关联关系，用于关联命令的响应
             Session.RequestIdCache.GetInstance().SetRequestId(session.deviceId, flowNo.ToString(), requestId);
         }
+
         public void OnDisConnect(string deviceId)
         {
             // 关闭session

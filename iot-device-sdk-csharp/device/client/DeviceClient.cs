@@ -271,7 +271,10 @@ namespace IoT.SDK.Device.Client
                 listTopic.Add(topicFilterBulderPreTopic);
 
                 connection.SubscribeTopic(listTopic);
-                rawMessageListenerDic.Add(msgKey, listener);
+                if (!rawMessageListenerDic.ContainsKey(msgKey))
+                {
+                    rawMessageListenerDic.Add(msgKey, listener);
+                }
             }
             catch (Exception ex)
             {

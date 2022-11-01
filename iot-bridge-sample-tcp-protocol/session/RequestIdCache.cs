@@ -31,7 +31,11 @@ namespace IoT.Bridge.Sample.Tcp.Session
 
         public void SetRequestId(string deviceId, string flowNo, string requestId)
         {
-            cache.Set(GetKey(deviceId, flowNo), requestId);
+            cache.Set(GetKey(deviceId, flowNo), requestId, new MemoryCacheEntryOptions()
+            {
+                SlidingExpiration = TimeSpan.FromMinutes(3),
+                Size = 1
+            });
         }
 
         public string RemoveRequestId(string deviceId, string flowNo)

@@ -76,8 +76,6 @@ namespace IoT.Bridge.Demo
                 return;
             }
 
-            bridgeDevice.bridgeClient.SubscribeDeviceTopic(DEVICE_ID);
-
             // 网桥设备同步登录接口。
             int result = bridgeDevice.bridgeClient.LoginSync(DEVICE_ID, DEVICE_SECRET, 1000);
             if (result != 0)

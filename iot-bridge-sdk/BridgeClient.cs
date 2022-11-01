@@ -109,6 +109,7 @@ namespace IoT.SDK.Bridge.Clent
 
         public void LoginAsync(string deviceId, string password, string requestId)
         {
+            SubscribeDeviceTopic(deviceId);
             PubMessage msg = GenerateLoginMsg(deviceId, password, requestId);
             Report(msg);
         }
@@ -122,6 +123,7 @@ namespace IoT.SDK.Bridge.Clent
 
         public int LoginSync(string deviceId, string password, int millisecondTimeout)
         {
+            SubscribeDeviceTopic(deviceId);
             string requestId = Guid.NewGuid().ToString();
             TaskCompletionSource<int> future = new TaskCompletionSource<int>();
             PubMessage msg = GenerateLoginMsg(deviceId, password, requestId);
@@ -206,7 +208,7 @@ namespace IoT.SDK.Bridge.Clent
             Report(new PubMessage(topic, JsonUtil.ConvertObjectToJsonString(iotResult)));
         }
 
-        public void SubscribeDeviceTopic(string deviceId)
+        private void SubscribeDeviceTopic(string deviceId)
         {
             List<MqttTopicFilter> listTopic = new List<MqttTopicFilter>();
             string topicMsgDown = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + MESSAGE_DOWN_TOPIC;
