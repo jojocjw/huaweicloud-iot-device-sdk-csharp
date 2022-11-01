@@ -79,7 +79,7 @@ namespace IoT.SDK.Device.Transport.Mqtt
             try
             {
                 string timestamp = DateTime.Now.ToString("yyyyMMddHH");
-                string clientID = clientConf.DeviceId + "_0_0_" + timestamp;
+                string clientID = clientConf.DeviceId + "_" + clientConf.Mode + "_0_" + timestamp;
 
                 // 对密码进行HmacSHA256加密
                 string secret = string.Empty;
@@ -106,7 +106,7 @@ namespace IoT.SDK.Device.Transport.Mqtt
                         .Build())
                     .Build();
                 }
-                else if (clientConf.Port == 8883 && clientConf.DeviceCert == null)
+                else if ((clientConf.Port == 8883 || clientConf.Port == 8884) && clientConf.DeviceCert == null)
                 {
                     options = new ManagedMqttClientOptionsBuilder()
                     .WithAutoReconnectDelay(TimeSpan.FromSeconds(RECONNECT_TIME))

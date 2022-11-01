@@ -50,17 +50,10 @@ namespace IoT.Bridge.Demo
 
         public static void CreateBridge(string serverUri, DeviceIdentityRegistry deviceIdentityRegistry)
         {
-            instance = new Bridge(serverUri, deviceIdentityRegistry);
-        }
-
-        public void BridgeTest()
-        {
-            // 默认使用北京4的接入地址，其他region的用户请修改
-            string serverUri = "ssl://iot-mqtts.cn-north-4.myhuaweicloud.com:8883";
-            int port = 8080;
-
-            CreateBridge(serverUri, null);
-            new TcpServer(port).Run();
+            if (instance == null)
+            {
+                instance = new Bridge(serverUri, deviceIdentityRegistry);
+            }
         }
 
         public Session GetSessionByChannel(string channelId)

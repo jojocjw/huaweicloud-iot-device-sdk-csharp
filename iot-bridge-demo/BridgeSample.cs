@@ -18,34 +18,31 @@ namespace IoT.Bridge.Demo
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         // iot平台连接地址
-        private static readonly string SERVER_URI = "ssl://iot-mqtts.cn-north-4.myhuaweicloud.com:8883";
+        private static readonly string SERVER_URI = "iot-mqtts.cn-north-5.myhuaweicloud.com";
 
         // 网桥设备Id（需要提前在iot平台上注册）
-        private static readonly string BRIDGE_ID = "702b1038-a174-4a1d-969f-f67f8df43c4a";
+        private static readonly string BRIDGE_ID = "bridge004";
 
         // 设备密钥
-        private static readonly string BRIDGE_SECRET = "123456789";
+        private static readonly string BRIDGE_SECRET = "bridge004";
 
         // 网桥下的设备Id
-        private static readonly string DEVICE_ID = "myDeviceId";
+        private static readonly string DEVICE_ID = "635b8da293d99934f4be3836_csharpStudent";
 
         // 网桥下设备的密钥
-        private static readonly string DEVICE_SECRET = "myDeviceSecret";
+        private static readonly string DEVICE_SECRET = "123456789";
 
         // 设备新的密钥，重置设备密钥时使用
-        private static readonly string NEW_DEVICE_SECRET = "myNewDeviceSecret";
-
-        // 请求Id，用于标识上报的消息, 每条需要的Id建议保持不一致
-        private static readonly string REQ_ID = "myRequestId";
+        private static readonly string NEW_DEVICE_SECRET = "123456789";
 
         // 服务Id，需要跟物模型中设置的一致
-        private static readonly string SERVICE_ID = "BasicData";
+        private static readonly string SERVICE_ID = "Location";
 
         // 属性，需要跟物模型中设置的一致。
-        private static readonly string PROPERTY = "luminance";
+        private static readonly string PROPERTY = "longitude";
 
         // 消息名称， 建议每条消息不一致，用于消息上报。
-        private static readonly string MESSAGE_NAME = " messageName";
+        private static readonly string MESSAGE_NAME = "messageName";
 
         // 消息Id， 建议每条消息不一致，用于消息上报。
         private static readonly string MESSAGE_ID = " messageId";
@@ -66,10 +63,11 @@ namespace IoT.Bridge.Demo
         private static readonly int SIZE = 1024;
 
         private BridgeDevice bridgeDevice;
-        BridgeSample()
+        public BridgeSample()
         {
             ClientConf clientConf = new ClientConf();
             clientConf.ServerUri = SERVER_URI;
+            clientConf.Port = 8884;
             clientConf.DeviceId = BRIDGE_ID;
             clientConf.Secret = BRIDGE_SECRET;
             clientConf.Mode = ClientConf.CONNECT_OF_BRIDGE_MODE;
@@ -81,8 +79,10 @@ namespace IoT.Bridge.Demo
                 return;
             }
 
+            bridgeDevice.bridgeClient.SubscribeDeviceTopic(DEVICE_ID);
+
             // 网桥设备同步登录接口。
-            int result = bridgeDevice.bridgeClient.LoginSync(DEVICE_ID, BRIDGE_SECRET, 1000);
+            int result = bridgeDevice.bridgeClient.LoginSync(DEVICE_ID, DEVICE_SECRET, 1000);
             if (result != 0)
             {
                 Log.Warn("bridge device login failed. the result is {0}", result);
@@ -175,7 +175,7 @@ namespace IoT.Bridge.Demo
         public void OnDisConnect(string deviceId)
         {
             // 打印断链的返回体
-            Log.Info("the disconnected device is {}", deviceId);
+            Log.Info("the disconnected device is {0}", deviceId);
         }
 
         private void Disconnect()
@@ -193,8 +193,9 @@ namespace IoT.Bridge.Demo
 
         private void Logout()
         {
+            string requestId = Guid.NewGuid().ToString();
             bridgeDevice.bridgeClient.logoutListener = this;
-            bridgeDevice.bridgeClient.LogoutAsync(DEVICE_ID, REQ_ID);
+            bridgeDevice.bridgeClient.LogoutAsync(DEVICE_ID, requestId);
         }
 
 
@@ -209,16 +210,17 @@ namespace IoT.Bridge.Demo
 
         private void ResetDeviceSecret()
         {
+            string requestId = Guid.NewGuid().ToString();
             bridgeDevice.bridgeClient.resetDeviceSecretListener = this;   
-            bridgeDevice.bridgeClient.ResetSecret(DEVICE_ID, REQ_ID, new DeviceSecret(DEVICE_SECRET, NEW_DEVICE_SECRET));
+            bridgeDevice.bridgeClient.ResetSecret(DEVICE_ID, requestId, new DeviceSecret(DEVICE_SECRET, NEW_DEVICE_SECRET));
         }
 
         // 消息下行操作
         public void OnDeviceMessage(string deviceId, DeviceMessage deviceMsg)
         {
             // 打印网桥消息下发的body体
-            Log.Info("the deviceId is {}", deviceId);
-            Log.Info("the message of device is {}", deviceMsg.ToString());
+            Log.Info("the deviceId is {0}", deviceId);
+            Log.Info("the message of device is {0}", deviceMsg.ToString());
         }
 
         private void HandlerMessageDown()
@@ -229,9 +231,9 @@ namespace IoT.Bridge.Demo
         // 命令响应操作
         public void OnCommand(string deviceId, string requestId, BridgeCommand bridgeCommand)
         {
-            Log.Info("the requestId is {}", requestId);
-            Log.Info("the deviceId is {}", deviceId);
-            Log.Info("the command of device is {}", bridgeCommand);
+            Log.Info("the requestId is {0}", requestId);
+            Log.Info("the deviceId is {0}", deviceId);
+            Log.Info("the command of device is {0}", bridgeCommand);
             bridgeDevice.bridgeClient.RespondCommand(deviceId, requestId, new CommandRsp(0));
         }
 

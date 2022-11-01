@@ -21,7 +21,7 @@ namespace IoT.SDK.Bridge.Handler
 
         public void OnMessageReceived(RawMessage message)
         {
-            Log.Debug("received the response of the bridge resets device secret, the  message is {0}", message);
+            Log.Debug("received the response of the device under one bridge logouts, the  message is {0}", message);
             string requestId = IotUtil.GetRequestId(message.Topic);
             string deviceId = IotUtil.GetDeviceId(message.Topic);
             if (string.IsNullOrEmpty(deviceId) || string.IsNullOrEmpty(requestId))
@@ -35,7 +35,7 @@ namespace IoT.SDK.Bridge.Handler
                 Log.Warn("the response of device logout is invalid.");
                 return;
             }
-            int resultCode = (int)dict["result_code"];
+            int resultCode = Convert.ToInt32(dict["result_code"]);
 
             if (bridgeClient.logoutListener != null)
             {

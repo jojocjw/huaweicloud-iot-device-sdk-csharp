@@ -118,7 +118,7 @@ namespace IoT.SDK.Device.Service
         /// 获取设备客户端。获取到设备客户端后，可以直接调用客户端提供的消息、属性、命令等接口
         /// </summary>
         /// <returns>设备客户端实例</returns>
-        public DeviceClient GetClient()
+        public virtual DeviceClient GetClient()
         {
             return client;
         }

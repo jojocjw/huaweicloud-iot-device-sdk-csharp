@@ -83,16 +83,14 @@ namespace IoT.SDK.Device.Client
             try
             {
                 RawMessageListener listener = null;
-                if (rawMessageListenerDic.ContainsKey(topic))
+                foreach (var listenItem in rawMessageListenerDic)
                 {
-                    listener = rawMessageListenerDic[topic];
-                }
-                
-                if (listener != null)
-                {
-                    listener.OnMessageReceived(message);
-
-                    return;
+                    if (topic.Contains(listenItem.Key))
+                    {
+                        listener = listenItem.Value;
+                        listener.OnMessageReceived(message);
+                        return;
+                    }
                 }
 
                 if (topic.Contains("/messages/down"))
@@ -263,7 +261,7 @@ namespace IoT.SDK.Device.Client
             }
         }
 
-        public void SubscribeCompleteTopic(string topic, RawMessageListener listener)
+        public void SubscribeCompleteTopic(string topic, string msgKey, RawMessageListener listener)
         {
             try
             {
@@ -273,7 +271,7 @@ namespace IoT.SDK.Device.Client
                 listTopic.Add(topicFilterBulderPreTopic);
 
                 connection.SubscribeTopic(listTopic);
-                rawMessageListenerDic.Add(topic, listener);
+                rawMessageListenerDic.Add(msgKey, listener);
             }
             catch (Exception ex)
             {

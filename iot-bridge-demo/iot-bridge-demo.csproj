@@ -17,4 +17,10 @@
     <ProjectReference Include="..\iot-device-sdk-csharp\iot-device-sdk-csharp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

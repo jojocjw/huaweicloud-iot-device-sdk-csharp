@@ -27,41 +27,42 @@ namespace IoT.SDK.Bridge.Clent
 
         // bridgeClient相关请求topic
 
-        private static readonly string BRIDGE_LOGIN = "$oc/bridges/{0}/devices/{1}/sys/login/request_id=%s";
+        private static readonly string BRIDGE_LOGIN = "$oc/bridges/{0}/devices/{1}/sys/login/request_id={2}";
 
-        private static readonly string BRIDGE_LOGOUT = "$oc/bridges/{0}/devices/{1}/sys/logout/request_id=%s";
+        private static readonly string BRIDGE_LOGOUT = "$oc/bridges/{0}/devices/{1}/sys/logout/request_id={2}";
 
         private static readonly string BRIDGE_REPORT_PROPERTY = "$oc/bridges/{0}/devices/{1}/sys/properties/report";
 
-        private static readonly string BRIDGE_RESET_DEVICE_SECRET = "$oc/bridges/{0}/devices/{1}/sys/reset_secret/request_id=%s";
+        private static readonly string BRIDGE_RESET_DEVICE_SECRET = "$oc/bridges/{0}/devices/{1}/sys/reset_secret/request_id={2}";
 
         private static readonly string BRIDGE_REPORT_MESSAGE = "$oc/bridges/{0}/devices/{1}/sys/messages/up";
 
         private static readonly string BRIDEGE_EVENT = "$oc/bridges/{0}/devices/{1}/sys/events/up";
 
-        private static readonly string BRIDGE_COMMAND_RESPONSE = "$oc/bridges/{0}/devices/{1}/sys/commands/response/request_id=%s";
+        private static readonly string BRIDGE_COMMAND_RESPONSE = "$oc/bridges/{0}/devices/{1}/sys/commands/response/request_id={2}";
 
-        private static readonly string BRIDGE_PROP_SET_RESPONSE = "$oc/bridges/{0}/devices/{1}/sys/properties/set/response/request_id=%s";
+        private static readonly string BRIDGE_PROP_SET_RESPONSE = "$oc/bridges/{0}/devices/{1}/sys/properties/set/response/request_id={2}";
 
-        private static readonly string BRIDGE_PROP_GET_RESPONSE = "$oc/bridges/{0}/devices/{1}/sys/properties/get/response/request_id=%s";
+        private static readonly string BRIDGE_PROP_GET_RESPONSE = "$oc/bridges/{0}/devices/{1}/sys/properties/get/response/request_id={2}";
 
         // bridgeClient相关的响应topic
+        private static readonly string BRIDGE_PRE_HEAD_TOPIC = "$oc/bridges/{0}/devices/{1}/";
 
-        private static readonly string MESSAGE_DOWN_TOPIC = "$oc/bridges/{0}/devices/{1}/sys/messages/down";
+        private static readonly string MESSAGE_DOWN_TOPIC = "sys/messages/down";
 
-        private static readonly string COMMAND_DOWN_TOPIC = "$oc/bridges/{0}/devices/{1}/sys/commands/request_id";
+        private static readonly string COMMAND_DOWN_TOPIC = "sys/commands/request_id";
 
-        private static readonly string LOGIN_RESP_TOPIC = "$oc/bridges/{0}/devices/{1}/sys/login/response/request_id";
+        private static readonly string LOGIN_RESP_TOPIC = "sys/login/response/request_id";
 
-        private static readonly string LOGOUT_RESP_TOPIC = "$oc/bridges/{0}/devices/{1}/sys/logout/response/request_id";
+        private static readonly string LOGOUT_RESP_TOPIC = "sys/logout/response/request_id";
 
-        private static readonly string BRIDGE_RESET_DEVICE_SECRET_RESP = "$oc/bridges/{0}/devices/{1}/sys/reset_secret/response/request_id";
+        private static readonly string BRIDGE_RESET_DEVICE_SECRET_RESP = "sys/reset_secret/response/request_id";
 
-        private static readonly string BRIDGE_DEVICE_DISCONNECT = "$oc/bridges/{0}/devices/{1}/sys/disconnect";
+        private static readonly string BRIDGE_DEVICE_DISCONNECT = "sys/disconnect";
 
-        private static readonly string PROPERTY_SET_TOPIC = "$oc/bridges/{0}/devices/{1}/sys/properties/set/request_id";
+        private static readonly string PROPERTY_SET_TOPIC = "sys/properties/set/request_id";
 
-        private static readonly string PROPERTY_GET_TOPIC = "$oc/bridges/{0}/devices/{1}/sys/properties/get/request_id";
+        private static readonly string PROPERTY_GET_TOPIC = "sys/properties/get/request_id";
 
         private string bridgeId;
 
@@ -106,9 +107,9 @@ namespace IoT.SDK.Bridge.Clent
                 secret = EncryptUtil.HmacSHA256(password, timestamp);
             }
             string topic = string.Format(BRIDGE_LOGIN, bridgeId, deviceId, requestId);
-            string msg = "{\"sign_type\":" + JsonUtil.ConvertObjectToJsonString(1) + "}";
-            msg += "{\"timestamp\":" + JsonUtil.ConvertObjectToJsonString(timestamp) + "}";
-            msg += "{\"password\":" + JsonUtil.ConvertObjectToJsonString(secret) + "}";
+            string msg = "{\"sign_type\":" + JsonUtil.ConvertObjectToJsonString(1) + ",";
+            msg += "\"timestamp\":" + JsonUtil.ConvertObjectToJsonString(timestamp) + ",";
+            msg += "\"password\":" + JsonUtil.ConvertObjectToJsonString(secret) + "}";
             return new PubMessage(topic, msg);
         }
 
@@ -211,40 +212,34 @@ namespace IoT.SDK.Bridge.Clent
             Report(new PubMessage(topic, JsonUtil.ConvertObjectToJsonString(iotResult)));
         }
 
-        public new int Connect()
+        public void SubscribeDeviceTopic(string deviceId)
         {
-            int ret = base.Connect();
-            if (ret != 0) return ret;
-
             List<MqttTopicFilter> listTopic = new List<MqttTopicFilter>();
+            string topicMsgDown = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + MESSAGE_DOWN_TOPIC;
+            SubscribeCompleteTopic(topicMsgDown, MESSAGE_DOWN_TOPIC, new BridgeMessageHandler(this));
 
-            string topicMsgDown = string.Format(MESSAGE_DOWN_TOPIC, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicMsgDown, new BridgeMessageHandler(this));
+            string topicCommand = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + COMMAND_DOWN_TOPIC;
+            SubscribeCompleteTopic(topicCommand, COMMAND_DOWN_TOPIC, new BridgeCommandHandler(this));
 
-            string topicCommand = string.Format(COMMAND_DOWN_TOPIC, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicCommand, new BridgeCommandHandler(this));
+            var topicLogin = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + LOGIN_RESP_TOPIC;
+            SubscribeCompleteTopic(topicLogin, LOGIN_RESP_TOPIC, new DeviceLoginHandler(this));
 
-            var topicLogin = string.Format(LOGIN_RESP_TOPIC, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicLogin, new DeviceLoginHandler(this));
+            var topicLogout = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + LOGOUT_RESP_TOPIC;
+            SubscribeCompleteTopic(topicLogout, LOGOUT_RESP_TOPIC, new DeviceLogoutHandler(this));
 
-            var topicLogout = string.Format(LOGOUT_RESP_TOPIC, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicLogout, new DeviceLogoutHandler(this));
+            var topicRstSecret = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + BRIDGE_RESET_DEVICE_SECRET_RESP;
+            SubscribeCompleteTopic(topicRstSecret, BRIDGE_RESET_DEVICE_SECRET_RESP, new SecretResetHandler(this));
 
-            var topicRstSecret = string.Format(BRIDGE_RESET_DEVICE_SECRET_RESP, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicRstSecret, new SecretResetHandler(this));
+            var topicDisConnect = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + BRIDGE_DEVICE_DISCONNECT;
+            SubscribeCompleteTopic(topicDisConnect, BRIDGE_DEVICE_DISCONNECT, new DeviceDisConnHandler(this));
 
-            var topicDisConnect = string.Format(BRIDGE_DEVICE_DISCONNECT, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicDisConnect, new DeviceDisConnHandler(this));
+            var topicPropertySet = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + PROPERTY_SET_TOPIC;
+            SubscribeCompleteTopic(topicPropertySet, PROPERTY_SET_TOPIC, new BridgePropertySetHandler(this));
 
-            var topicPropertySet = string.Format(PROPERTY_SET_TOPIC, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicPropertySet, new BridgePropertySetHandler(this));
+            var topicPropertyGet = string.Format(BRIDGE_PRE_HEAD_TOPIC, bridgeId, deviceId) + PROPERTY_GET_TOPIC;
+            SubscribeCompleteTopic(topicPropertyGet, PROPERTY_GET_TOPIC, new BridgePropertyGetHandler(this));
 
-            var topicPropertyGet = string.Format(PROPERTY_GET_TOPIC, bridgeId, bridgeId);
-            SubscribeCompleteTopic(topicPropertyGet, new BridgePropertyGetHandler(this));
-
-            return ret;
         }
-
 
     }
 }

@@ -38,6 +38,11 @@ namespace IoT.SDK.Bridge.Device
             Log.Debug("the bridge client starts to init.");
             return bridgeClient.Connect();
         }
+
+        public override DeviceClient GetClient()
+        {
+            return bridgeClient;
+        }
     
     }
 }

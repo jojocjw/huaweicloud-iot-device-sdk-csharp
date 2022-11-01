@@ -150,7 +150,7 @@ namespace IoT.SDK.Device.Utils
                 if (!string.IsNullOrEmpty(topic) && topic.Contains("/devices/"))
                 {
                     string[] split = topic.Split(new string[] {"/devices/"}, StringSplitOptions.RemoveEmptyEntries);
-                    int length = split[1].IndexOf('/') + 1;
+                    int length = split[1].IndexOf('/');
                     if (length == 0)
                     {
                         throw new InternalException(BaseExceptionEnum.BASE_TOPIC_INVALID_NO_DEVICE_ID, "topic is invalid, no device id.");

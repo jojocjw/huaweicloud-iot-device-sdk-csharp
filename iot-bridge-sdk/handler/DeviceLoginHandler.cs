@@ -35,7 +35,7 @@ namespace IoT.SDK.Bridge.Handler
                 Log.Warn("the response of device login is invalid.");
                 return;
             }
-            int resultCode = (int)dict["result_code"];
+            int resultCode = Convert.ToInt32(dict["result_code"]);
 
             if (bridgeClient.loginListener != null)
             {

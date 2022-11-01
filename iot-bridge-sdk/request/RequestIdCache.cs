@@ -25,7 +25,8 @@ namespace IoT.SDK.Bridge.Request
         {
             futureCache.Set(requestId, future, new MemoryCacheEntryOptions()
             {
-                SlidingExpiration = TimeSpan.FromMinutes(3)
+                SlidingExpiration = TimeSpan.FromMinutes(3),
+                Size = 1
             });
         }
 
