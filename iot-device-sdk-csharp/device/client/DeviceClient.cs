@@ -261,7 +261,13 @@ namespace IoT.SDK.Device.Client
             }
         }
 
-        public void SubscribeCompleteTopic(string topic, string msgKey, RawMessageListener listener)
+        /// <summary>
+        /// Subscribes to a Complete topic. This method can be used only to subscribe to custom topics.
+        /// </summary>
+        /// <param name="topic">Indicates the name of the custom topic.</param>
+        /// <param name="topicKey">Indicates the key message of the custom topic.</param>
+        /// <param name="listener">Indicates the listener of the topicKey.</param>
+        public void SubscribeCompleteTopic(string topic, string topicKey, RawMessageListener listener)
         {
             try
             {
@@ -271,9 +277,10 @@ namespace IoT.SDK.Device.Client
                 listTopic.Add(topicFilterBulderPreTopic);
 
                 connection.SubscribeTopic(listTopic);
-                if (!rawMessageListenerDic.ContainsKey(msgKey))
+                if (topicKey == null || listener == null) return;
+                if (!rawMessageListenerDic.ContainsKey(topicKey))
                 {
-                    rawMessageListenerDic.Add(msgKey, listener);
+                    rawMessageListenerDic.Add(topicKey, listener);
                 }
             }
             catch (Exception ex)
