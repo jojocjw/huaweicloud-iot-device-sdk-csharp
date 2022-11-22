@@ -15,8 +15,8 @@ namespace IoT.Device.Feature.Test
             string deviceX509Id = "5eb4cd4049a5ab087d7d4861_x509_demo";
             string deviceSecret = "secret";
 
-            ////MessageSample ms = new MessageSample();
-            ////ms.FunMessageSample(serverUri, 1883, deviceId, deviceSecret);
+            MessageSample ms = new MessageSample();
+            ms.FunMessageSample(serverUri, 1883, deviceId, deviceSecret);
 
             ////PropertySample ps = new PropertySample();
             ////ps.FunPropertySample(serverUri, 1883, deviceId, deviceSecret);
